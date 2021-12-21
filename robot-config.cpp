@@ -10,9 +10,14 @@ brain  Brain;
 // VEXcode device constructors
 
 // Left wheel on port 1
-motor LeftDriveSmart = motor(PORT1, ratio18_1, false);
-// Right wheel on port 2
-motor RightDriveSmart = motor(PORT2, ratio18_1, true);
+motor LeftDriveSmart = motor(PORT2, ratio18_1, false);
+// Right wheel on port 3
+motor RightDriveSmart = motor(PORT3, ratio18_1, true);
+// Left motor on port 5
+motor TwoBarLiftL = motor(PORT5, ratio18_1, false);
+// Right motor on port 4
+motor TwoBarLiftR = motor(PORT4, ratio18_1, true);
+
 // Controller
 controller Controller1 = controller(primary);
 
@@ -32,8 +37,19 @@ int rc_auto_loop_function_Controller1() {
       // calculate the drivetrain motor velocities from the controller joystick axies
       // left = Axis3
       // right = Axis2
-      int drivetrainLeftSideSpeed = Controller1.Axis3.position();
-      int drivetrainRightSideSpeed = Controller1.Axis2.position();
+
+      int drivetrainLeftSideSpeed = Controller1.Axis2.position();
+      int drivetrainRightSideSpeed = Controller1.Axis3.position();
+      // Should the motors elevate/lower the bar?
+      bool BarLiftUp = Controller1.ButtonR1.pressing();
+      bool BarLiftDown = Controller1.ButtonR2.pressing();
+      // Prevent overrotation
+      int motorRot = TwoBarLiftL.rotation(deg);
+      int vel = motorRot < 30 ? BarLiftUp ? 1 : BarLiftDown ? -1 : 0 : 0 ;
+      TwoBarLiftL.setVelocity(vel, percent);
+      TwoBarLiftR.setVelocity(vel, percent);
+      TwoBarLiftL.spin(forward);
+      TwoBarLiftR.spin(forward);
       
       // check if the value is inside of the deadband range
       if (drivetrainLeftSideSpeed < 5 && drivetrainLeftSideSpeed > -5) {
