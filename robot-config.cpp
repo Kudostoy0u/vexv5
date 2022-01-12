@@ -45,7 +45,7 @@ int rc_auto_loop_function_Controller1() {
       bool BarLiftDown = Controller1.ButtonR2.pressing();
       // Prevent overrotation
       int motorRot = TwoBarLiftL.rotation(deg);
-      int vel = motorRot < 30 ? BarLiftUp ? 1 : BarLiftDown ? -1 : 0 : 0 ;
+      float vel = motorRot < 30 ? BarLiftUp ? 0.1 : BarLiftDown ? -0.1 : 0.0 : 0.0 ;
       TwoBarLiftL.setVelocity(vel, percent);
       TwoBarLiftR.setVelocity(vel, percent);
       TwoBarLiftL.spin(forward);
